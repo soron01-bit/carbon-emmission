@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { MapContainer, TileLayer, Circle, Popup, Marker, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, Circle, Popup, Marker, useMap, Polyline } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { motion } from 'framer-motion';
-import { Crosshair, MapPin } from 'lucide-react';
+import { Crosshair, MapPin, AlertTriangle } from 'lucide-react';
 import L from 'leaflet';
 
 // Fix for default marker icon in Leaflet + React
@@ -72,13 +72,16 @@ const CityMap = ({ mapData, onLocationChange }) => {
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-start sm:items-center">
           <div className="flex flex-wrap gap-x-3 gap-y-1">
             <span className="flex items-center gap-1 text-[10px] sm:text-xs text-zinc-400">
-              <span className="w-2 h-2 rounded-full bg-red-500 shadow-[0_0_5px_rgba(239,68,68,0.5)]"></span> Pollution
+              <span className="w-2 h-2 rounded-full bg-red-500 shadow-[0_0_5px_rgba(239,68,68,0.5)]"></span> High Traffic
             </span>
             <span className="flex items-center gap-1 text-[10px] sm:text-xs text-zinc-400">
-              <span className="w-2 h-2 rounded-full bg-amber-500 shadow-[0_0_5px_rgba(245,158,11,0.5)]"></span> Traffic
+              <span className="w-2 h-2 rounded-full bg-red-500/50"></span> Pollution
             </span>
             <span className="flex items-center gap-1 text-[10px] sm:text-xs text-zinc-400">
-              <span className="w-2 h-2 rounded-full bg-purple-500 shadow-[0_0_5px_rgba(188,19,254,0.5)]"></span> Heat
+              <span className="w-2 h-2 rounded-full bg-amber-500"></span> Moderate
+            </span>
+            <span className="flex items-center gap-1 text-[10px] sm:text-xs text-zinc-400">
+              <span className="w-2 h-2 rounded-full bg-emerald-500"></span> Smooth
             </span>
           </div>
           
@@ -98,7 +101,6 @@ const CityMap = ({ mapData, onLocationChange }) => {
       </div>
       
       <div className="flex-1 rounded-lg overflow-hidden relative m-2">
-        {/* Dark mode futuristic map style */}
         <MapContainer 
           center={mapData.center} 
           zoom={13} 
@@ -123,6 +125,33 @@ const CityMap = ({ mapData, onLocationChange }) => {
               </Popup>
             </Marker>
           )}
+
+          {/* Render Road Traffic Signals */}
+          {mapData.roads && mapData.roads.map((road) => (
+            <Polyline
+              key={road.id}
+              positions={road.path}
+              pathOptions={{ 
+                color: road.color, 
+                weight: road.congestion > 80 ? 6 : 4,
+                opacity: 0.8,
+                dashArray: road.congestion > 80 ? '1, 10' : '' 
+              }}
+            >
+              <Popup>
+                <div className="font-sans text-xs">
+                  <strong style={{ color: road.color }}>{road.name}</strong>
+                  <br />
+                  Congestion: {road.congestion}%
+                  {road.congestion > 80 && (
+                    <div className="mt-1 flex items-center gap-1 text-red-500 font-bold">
+                      <AlertTriangle size={12} /> RED ALERT
+                    </div>
+                  )}
+                </div>
+              </Popup>
+            </Polyline>
+          ))}
           
           {mapData.zones.map((zone) => (
             <Circle

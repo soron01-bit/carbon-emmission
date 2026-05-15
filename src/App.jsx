@@ -50,7 +50,8 @@ function App() {
       setNodeStatus(newData.status);
       setMapData({
         center: [lat, lon],
-        zones: newData.zones
+        zones: newData.zones,
+        roads: newData.roads
       });
       setIsUpdating(false);
     }, 1000);

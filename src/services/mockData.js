@@ -48,6 +48,24 @@ export const generateLocationData = (lat, lon) => {
         position: [lat + (random(seed + 8) - 0.5) * 0.02, lon + (random(seed + 9) - 0.5) * 0.02], 
         type: 'heat', value: 'Thermal Anomaly', radius: 500, color: '#bc13fe' 
       }
-    ]
+    ],
+    // Generate mock roads near user
+    roads: [
+      {
+        id: `r1-${seed}`,
+        path: [[lat - 0.005, lon - 0.01], [lat + 0.005, lon + 0.01]],
+        congestion: Math.floor(random(seed + 10) * 100),
+        name: "Sector-7 Bypass"
+      },
+      {
+        id: `r2-${seed}`,
+        path: [[lat - 0.01, lon + 0.005], [lat + 0.01, lon - 0.005]],
+        congestion: Math.floor(random(seed + 11) * 100),
+        name: "Main City Hub"
+      }
+    ].map(road => ({
+      ...road,
+      color: road.congestion > 80 ? '#ef4444' : (road.congestion > 50 ? '#f59e0b' : '#10b981')
+    }))
   };
 };
