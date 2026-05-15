@@ -33,39 +33,21 @@ export const generateLocationData = (lat, lon) => {
     status: `Node: ${lat.toFixed(2)}, ${lon.toFixed(2)}`,
     // Generate 3-4 random zones near the user
     zones: [
-      { 
-        id: `p-${seed}`, 
-        position: [lat + (random(seed + 4) - 0.5) * 0.02, lon + (random(seed + 5) - 0.5) * 0.02], 
-        type: 'pollution', value: 'Local AQI Spike', radius: 400, color: '#ef4444' 
-      },
-      { 
-        id: `t-${seed}`, 
-        position: [lat + (random(seed + 6) - 0.5) * 0.02, lon + (random(seed + 7) - 0.5) * 0.02], 
-        type: 'traffic', value: 'Congestion Alert', radius: 300, color: '#f59e0b' 
-      },
-      { 
-        id: `h-${seed}`, 
-        position: [lat + (random(seed + 8) - 0.5) * 0.02, lon + (random(seed + 9) - 0.5) * 0.02], 
-        type: 'heat', value: 'Thermal Anomaly', radius: 500, color: '#bc13fe' 
-      }
-    ],
-    // Generate mock roads near user
-    roads: [
       {
-        id: `r1-${seed}`,
-        path: [[lat - 0.005, lon - 0.01], [lat + 0.005, lon + 0.01]],
-        congestion: Math.floor(random(seed + 10) * 100),
-        name: "Sector-7 Bypass"
+        id: `p-${seed}`,
+        position: [lat + (random(seed + 4) - 0.5) * 0.02, lon + (random(seed + 5) - 0.5) * 0.02],
+        type: 'pollution', value: 'Local AQI Spike', radius: 400, color: '#ef4444'
       },
       {
-        id: `r2-${seed}`,
-        path: [[lat - 0.01, lon + 0.005], [lat + 0.01, lon - 0.005]],
-        congestion: Math.floor(random(seed + 11) * 100),
-        name: "Main City Hub"
+        id: `t-${seed}`,
+        position: [lat + (random(seed + 6) - 0.5) * 0.02, lon + (random(seed + 7) - 0.5) * 0.02],
+        type: 'traffic', value: 'Congestion Alert', radius: 300, color: '#f59e0b'
+      },
+      {
+        id: `h-${seed}`,
+        position: [lat + (random(seed + 8) - 0.5) * 0.02, lon + (random(seed + 9) - 0.5) * 0.02],
+        type: 'heat', value: 'Thermal Anomaly', radius: 500, color: '#bc13fe'
       }
-    ].map(road => ({
-      ...road,
-      color: road.congestion > 80 ? '#ef4444' : (road.congestion > 50 ? '#f59e0b' : '#10b981')
-    }))
+    ]
   };
 };

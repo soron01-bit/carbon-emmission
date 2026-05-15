@@ -26,7 +26,7 @@ function App() {
 
   const handleLocationChange = async (lat, lon) => {
     setIsUpdating(true);
-    
+
     // Reverse Geocoding to get City Name
     try {
       const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
@@ -50,8 +50,7 @@ function App() {
       setNodeStatus(newData.status);
       setMapData({
         center: [lat, lon],
-        zones: newData.zones,
-        roads: newData.roads
+        zones: newData.zones
       });
       setIsUpdating(false);
     }, 1000);
@@ -65,10 +64,10 @@ function App() {
 
       {/* Main Content */}
       <div className="relative z-10 container mx-auto px-4 py-8">
-        
+
         <AnimatePresence mode="wait">
           {isLoading ? (
-            <motion.div 
+            <motion.div
               key="loading"
               exit={{ opacity: 0 }}
               className="h-[80vh] flex flex-col items-center justify-center gap-4"
@@ -100,7 +99,7 @@ function App() {
                     <p className="text-zinc-500 text-sm tracking-wide">SMART CITY DIGITAL TWIN</p>
                   </div>
                 </div>
-                
+
                 <div className="flex items-center gap-4 px-4 py-2 bg-zinc-900/60 rounded-full border border-zinc-800 backdrop-blur-md">
                   <div className="flex items-center gap-2">
                     <span className="relative flex h-3 w-3">
@@ -127,13 +126,13 @@ function App() {
                         exit={{ opacity: 0.5 }}
                         className="flex flex-col gap-4"
                       >
-                        <MetricCard 
-                          title="Air Quality (AQI)" 
-                          value={metrics.aqi} 
-                          unit={`${cityName} AQI`} 
-                          icon={Wind} 
-                          trend={{ value: '+12%', label: 'local variance', isPositive: false }} 
-                          delay={0.1} 
+                        <MetricCard
+                          title="Air Quality (AQI)"
+                          value={metrics.aqi}
+                          unit={`${cityName} AQI`}
+                          icon={Wind}
+                          trend={{ value: '+12%', label: 'local variance', isPositive: false }}
+                          delay={0.1}
                         />
                         <MetricCard title="Carbon Emission" value={metrics.carbonEmission} unit="t/day" icon={Factory} trend={{ value: '-5%', label: 'sector avg', isPositive: true }} delay={0.2} />
                         <MetricCard title="Traffic Congestion" value={`${metrics.trafficCongestion}%`} icon={Car} trend={{ value: '+2%', label: 'local density', isPositive: false }} delay={0.3} />
@@ -144,8 +143,8 @@ function App() {
 
                   <div className="lg:col-span-3 flex flex-col gap-6">
                     <CityMap mapData={mapData} onLocationChange={handleLocationChange} />
-                    
-                    <motion.div 
+
+                    <motion.div
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       className="glass-panel p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
@@ -156,7 +155,7 @@ function App() {
                           {isUpdating ? `Recalibrating...` : `Sensors at Node ${nodeStatus} are operational.`}
                         </p>
                       </div>
-                      <button 
+                      <button
                         onClick={() => setShowAnalysis(true)}
                         className="w-full sm:w-auto px-6 py-2 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border border-cyan-500/50 rounded-lg transition-all duration-300 font-medium text-sm flex items-center justify-center gap-2"
                       >
@@ -177,7 +176,7 @@ function App() {
               transition={{ duration: 0.4 }}
               className="max-w-5xl mx-auto"
             >
-              <button 
+              <button
                 onClick={() => setShowAnalysis(false)}
                 className="mb-8 flex items-center gap-2 text-zinc-400 hover:text-cyan-400 transition-colors group"
               >
@@ -196,19 +195,19 @@ function App() {
               </header>
 
               <DetailedAnalysis metrics={metrics} />
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-10">
                 <div className="glass-panel p-6">
                   <h3 className="text-white font-semibold mb-3">Environmental Summary</h3>
                   <p className="text-zinc-400 text-sm leading-relaxed">
-                    Based on current sensor data from node {nodeStatus} in {cityName}, the area is experiencing {metrics.aqi > 100 ? 'elevated' : 'moderate'} pollutant levels. 
+                    Based on current sensor data from node {nodeStatus} in {cityName}, the area is experiencing {metrics.aqi > 100 ? 'elevated' : 'moderate'} pollutant levels.
                     Recommended action: {metrics.aqi > 100 ? 'Deploy air filtration drones.' : 'Continue routine monitoring.'}
                   </p>
                 </div>
                 <div className="glass-panel p-6">
                   <h3 className="text-white font-semibold mb-3">System Insights</h3>
                   <p className="text-zinc-400 text-sm leading-relaxed">
-                    Traffic congestion is currently at {metrics.trafficCongestion}%. Automated rerouting is {metrics.trafficCongestion > 50 ? 'active' : 'on standby'}. 
+                    Traffic congestion is currently at {metrics.trafficCongestion}%. Automated rerouting is {metrics.trafficCongestion > 50 ? 'active' : 'on standby'}.
                     Thermal index indicates a {metrics.temperature > 30 ? 'high' : 'stable'} heat island signature.
                   </p>
                 </div>

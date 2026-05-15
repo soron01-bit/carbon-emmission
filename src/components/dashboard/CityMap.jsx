@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { MapContainer, TileLayer, Circle, Popup, Marker, useMap, Polyline } from 'react-leaflet';
+import { MapContainer, TileLayer, Circle, Popup, Marker, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { motion } from 'framer-motion';
-import { Crosshair, MapPin, AlertTriangle } from 'lucide-react';
+import { Crosshair, MapPin } from 'lucide-react';
 import L from 'leaflet';
 
 // Fix for default marker icon in Leaflet + React
@@ -12,9 +12,9 @@ import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
-    iconRetinaUrl: markerIcon2x,
-    iconUrl: markerIcon,
-    shadowUrl: markerShadow,
+  iconRetinaUrl: markerIcon2x,
+  iconUrl: markerIcon,
+  shadowUrl: markerShadow,
 });
 
 // Custom component to handle map flying
@@ -58,7 +58,7 @@ const CityMap = ({ mapData, onLocationChange }) => {
   };
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.6 }}
@@ -72,25 +72,22 @@ const CityMap = ({ mapData, onLocationChange }) => {
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-start sm:items-center">
           <div className="flex flex-wrap gap-x-3 gap-y-1">
             <span className="flex items-center gap-1 text-[10px] sm:text-xs text-zinc-400">
-              <span className="w-2 h-2 rounded-full bg-red-500 shadow-[0_0_5px_rgba(239,68,68,0.5)]"></span> High Traffic
+              <span className="w-2 h-2 rounded-full bg-red-500 shadow-[0_0_5px_rgba(239,68,68,0.5)]"></span> Pollution
             </span>
             <span className="flex items-center gap-1 text-[10px] sm:text-xs text-zinc-400">
-              <span className="w-2 h-2 rounded-full bg-red-500/50"></span> Pollution
+              <span className="w-2 h-2 rounded-full bg-amber-500 shadow-[0_0_5px_rgba(245,158,11,0.5)]"></span> Traffic
             </span>
             <span className="flex items-center gap-1 text-[10px] sm:text-xs text-zinc-400">
-              <span className="w-2 h-2 rounded-full bg-amber-500"></span> Moderate
-            </span>
-            <span className="flex items-center gap-1 text-[10px] sm:text-xs text-zinc-400">
-              <span className="w-2 h-2 rounded-full bg-emerald-500"></span> Smooth
+              <span className="w-2 h-2 rounded-full bg-purple-500 shadow-[0_0_5px_rgba(188,19,254,0.5)]"></span> Heat
             </span>
           </div>
-          
-          <button 
+
+          <button
             onClick={handleLocate}
             disabled={isLocating}
             className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all duration-300 text-xs font-medium whitespace-nowrap
-              ${isLocating 
-                ? 'bg-zinc-800 border-zinc-700 text-zinc-500 cursor-wait' 
+              ${isLocating
+                ? 'bg-zinc-800 border-zinc-700 text-zinc-500 cursor-wait'
                 : 'bg-cyan-500/10 border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/20 hover:border-cyan-500/50'
               }`}
           >
@@ -99,11 +96,12 @@ const CityMap = ({ mapData, onLocationChange }) => {
           </button>
         </div>
       </div>
-      
+
       <div className="flex-1 rounded-lg overflow-hidden relative m-2">
-        <MapContainer 
-          center={mapData.center} 
-          zoom={13} 
+        {/* Dark mode futuristic map style */}
+        <MapContainer
+          center={mapData.center}
+          zoom={13}
           style={{ height: '100%', width: '100%', background: '#09090b' }}
           zoomControl={false}
         >
@@ -111,7 +109,7 @@ const CityMap = ({ mapData, onLocationChange }) => {
             url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
           />
-          
+
           <MapController center={userLocation} />
 
           {userLocation && (
@@ -126,33 +124,6 @@ const CityMap = ({ mapData, onLocationChange }) => {
             </Marker>
           )}
 
-          {/* Render Road Traffic Signals */}
-          {mapData.roads && mapData.roads.map((road) => (
-            <Polyline
-              key={road.id}
-              positions={road.path}
-              pathOptions={{ 
-                color: road.color, 
-                weight: road.congestion > 80 ? 6 : 4,
-                opacity: 0.8,
-                dashArray: road.congestion > 80 ? '1, 10' : '' 
-              }}
-            >
-              <Popup>
-                <div className="font-sans text-xs">
-                  <strong style={{ color: road.color }}>{road.name}</strong>
-                  <br />
-                  Congestion: {road.congestion}%
-                  {road.congestion > 80 && (
-                    <div className="mt-1 flex items-center gap-1 text-red-500 font-bold">
-                      <AlertTriangle size={12} /> RED ALERT
-                    </div>
-                  )}
-                </div>
-              </Popup>
-            </Polyline>
-          ))}
-          
           {mapData.zones.map((zone) => (
             <Circle
               key={zone.id}
@@ -170,7 +141,7 @@ const CityMap = ({ mapData, onLocationChange }) => {
             </Circle>
           ))}
         </MapContainer>
-        
+
         {/* Futuristic map overlay scanner effect */}
         <div className="absolute inset-0 pointer-events-none border border-cyan-500/20 rounded-lg">
           <div className="w-full h-[1px] bg-cyan-500/30 absolute animate-[scan_4s_ease-in-out_infinite]" style={{ boxShadow: '0 0 10px rgba(0, 243, 255, 0.5)' }}></div>
