@@ -69,24 +69,30 @@ const CityMap = ({ mapData, onLocationChange }) => {
           <MapPin size={18} className="text-cyan-400" />
           Live Environmental Topography
         </h2>
-        <div className="flex gap-4 items-center">
-          <div className="hidden sm:flex gap-2">
-            <span className="flex items-center gap-1 text-xs text-zinc-400"><span className="w-2 h-2 rounded-full bg-red-500"></span> Pollution</span>
-            <span className="flex items-center gap-1 text-xs text-zinc-400"><span className="w-2 h-2 rounded-full bg-amber-500"></span> Traffic</span>
-            <span className="flex items-center gap-1 text-xs text-zinc-400"><span className="w-2 h-2 rounded-full bg-purple-500"></span> Heat</span>
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-start sm:items-center">
+          <div className="flex flex-wrap gap-x-3 gap-y-1">
+            <span className="flex items-center gap-1 text-[10px] sm:text-xs text-zinc-400">
+              <span className="w-2 h-2 rounded-full bg-red-500 shadow-[0_0_5px_rgba(239,68,68,0.5)]"></span> Pollution
+            </span>
+            <span className="flex items-center gap-1 text-[10px] sm:text-xs text-zinc-400">
+              <span className="w-2 h-2 rounded-full bg-amber-500 shadow-[0_0_5px_rgba(245,158,11,0.5)]"></span> Traffic
+            </span>
+            <span className="flex items-center gap-1 text-[10px] sm:text-xs text-zinc-400">
+              <span className="w-2 h-2 rounded-full bg-purple-500 shadow-[0_0_5px_rgba(188,19,254,0.5)]"></span> Heat
+            </span>
           </div>
           
           <button 
             onClick={handleLocate}
             disabled={isLocating}
-            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all duration-300 text-xs font-medium
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all duration-300 text-xs font-medium whitespace-nowrap
               ${isLocating 
                 ? 'bg-zinc-800 border-zinc-700 text-zinc-500 cursor-wait' 
                 : 'bg-cyan-500/10 border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/20 hover:border-cyan-500/50'
               }`}
           >
             <Crosshair size={14} className={isLocating ? 'animate-spin' : ''} />
-            {isLocating ? 'Locating...' : 'My Location'}
+            {isLocating ? 'Scanning...' : 'My Location'}
           </button>
         </div>
       </div>

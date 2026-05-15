@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 import MetricCard from './components/dashboard/MetricCard';
 import CityMap from './components/dashboard/CityMap';
+import DetailedAnalysis from './components/dashboard/DetailedAnalysis';
 import { mockDashboardData, generateLocationData } from './services/mockData';
 
 function App() {
@@ -39,6 +40,13 @@ function App() {
       });
       setIsUpdating(false);
     }, 1000);
+  };
+
+  const scrollToAnalysis = () => {
+    const element = document.getElementById('detailed-analysis');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   return (
@@ -83,7 +91,7 @@ function App() {
               </span>
             </div>
             <div className="w-px h-4 bg-zinc-700"></div>
-            <span className="text-xs text-zinc-500 font-mono">NODE: {nodeStatus}</span>
+            <span className="text-xs text-zinc-500 font-mono uppercase tracking-tighter">NODE: {nodeStatus}</span>
           </motion.div>
         </header>
 
@@ -96,80 +104,90 @@ function App() {
             <p className="text-cyan-500 animate-pulse text-sm font-mono tracking-widest">INITIALIZING SENSORS...</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-            
-            {/* Left Column: Metrics */}
-            <div className="lg:col-span-1 flex flex-col gap-4">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={nodeStatus}
-                  initial={{ opacity: 0.5 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0.5 }}
-                  className="flex flex-col gap-4"
+          <div className="max-w-7xl mx-auto">
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-10">
+              
+              {/* Left Column: Metrics */}
+              <div className="lg:col-span-1 flex flex-col gap-4">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={nodeStatus}
+                    initial={{ opacity: 0.5 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0.5 }}
+                    className="flex flex-col gap-4"
+                  >
+                    <MetricCard 
+                      title="Air Quality (AQI)" 
+                      value={metrics.aqi} 
+                      unit="US AQI"
+                      icon={Wind}
+                      trend={{ value: '+12%', label: 'local variance', isPositive: false }}
+                      delay={0.1}
+                    />
+                    <MetricCard 
+                      title="Carbon Emission" 
+                      value={metrics.carbonEmission} 
+                      unit="t/day"
+                      icon={Factory}
+                      trend={{ value: '-5%', label: 'sector avg', isPositive: true }}
+                      delay={0.2}
+                    />
+                    <MetricCard 
+                      title="Traffic Congestion" 
+                      value={`${metrics.trafficCongestion}%`} 
+                      icon={Car}
+                      trend={{ value: '+2%', label: 'local density', isPositive: false }}
+                      delay={0.3}
+                    />
+                    <MetricCard 
+                      title="Avg Temperature" 
+                      value={`${metrics.temperature}°C`} 
+                      icon={CloudRain}
+                      trend={{ value: '+1.2°C', label: 'micro-climate', isPositive: false }}
+                      delay={0.4}
+                    />
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+
+              {/* Right Column: Map & Main View */}
+              <div className="lg:col-span-3 flex flex-col gap-6">
+                <CityMap 
+                  mapData={mapData} 
+                  onLocationChange={handleLocationChange}
+                />
+                
+                <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.5 }}
+                  className="glass-panel p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
                 >
-                  <MetricCard 
-                    title="Air Quality (AQI)" 
-                    value={metrics.aqi} 
-                    unit="US AQI"
-                    icon={Wind}
-                    trend={{ value: '+12%', label: 'local variance', isPositive: false }}
-                    delay={0.1}
-                  />
-                  <MetricCard 
-                    title="Carbon Emission" 
-                    value={metrics.carbonEmission} 
-                    unit="t/day"
-                    icon={Factory}
-                    trend={{ value: '-5%', label: 'sector avg', isPositive: true }}
-                    delay={0.2}
-                  />
-                  <MetricCard 
-                    title="Traffic Congestion" 
-                    value={`${metrics.trafficCongestion}%`} 
-                    icon={Car}
-                    trend={{ value: '+2%', label: 'local density', isPositive: false }}
-                    delay={0.3}
-                  />
-                  <MetricCard 
-                    title="Avg Temperature" 
-                    value={`${metrics.temperature}°C`} 
-                    icon={CloudRain}
-                    trend={{ value: '+1.2°C', label: 'micro-climate', isPositive: false }}
-                    delay={0.4}
-                  />
+                  <div>
+                    <h3 className="text-lg font-medium text-white mb-1">System Status</h3>
+                    <p className="text-sm text-zinc-500">
+                      {isUpdating 
+                        ? `Recalibrating for coordinates ${nodeStatus}...` 
+                        : `All sensors at Node ${nodeStatus} are operational.`}
+                    </p>
+                  </div>
+                  <button 
+                    onClick={scrollToAnalysis}
+                    className="w-full sm:w-auto px-6 py-2 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border border-cyan-500/50 rounded-lg transition-all duration-300 font-medium text-sm flex items-center justify-center gap-2"
+                  >
+                    <Navigation size={16} />
+                    Detailed Analysis
+                  </button>
                 </motion.div>
-              </AnimatePresence>
+              </div>
             </div>
 
-            {/* Right Column: Map & Main View */}
-            <div className="lg:col-span-3 flex flex-col gap-6">
-              <CityMap 
-                mapData={mapData} 
-                onLocationChange={handleLocationChange}
-              />
-              
-              <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.5 }}
-                className="glass-panel p-6 flex items-center justify-between"
-              >
-                <div>
-                  <h3 className="text-lg font-medium text-white mb-1">System Status</h3>
-                  <p className="text-sm text-zinc-500">
-                    {isUpdating 
-                      ? `Recalibrating for coordinates ${nodeStatus}...` 
-                      : `All sensors at ${nodeStatus} are operational.`}
-                  </p>
-                </div>
-                <button className="px-6 py-2 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border border-cyan-500/50 rounded-lg transition-all duration-300 font-medium text-sm flex items-center gap-2">
-                  <Navigation size={16} />
-                  Detailed Analysis
-                </button>
-              </motion.div>
-            </div>
+            <DetailedAnalysis metrics={metrics} />
             
+            <footer className="mt-20 py-10 border-t border-zinc-900 text-center">
+              <p className="text-zinc-600 text-xs tracking-widest uppercase">Urban Pulse © 2026 • Intelligent City Systems</p>
+            </footer>
           </div>
         )}
       </div>
