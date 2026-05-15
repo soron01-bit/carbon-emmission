@@ -1,0 +1,52 @@
+@import "tailwindcss";
+
+@theme {
+  --color-cyber-blue: #00f3ff;
+  --color-cyber-purple: #bc13fe;
+  --color-cyber-dark: #09090b;
+  --color-cyber-panel: rgba(20, 20, 25, 0.7);
+  
+  --font-sans: 'Inter', system-ui, sans-serif;
+  
+  --animate-scan: scan 4s ease-in-out infinite;
+  @keyframes scan {
+    0%, 100% { top: 0%; opacity: 0; }
+    10% { opacity: 1; }
+    50% { top: 100%; opacity: 1; }
+    60% { opacity: 0; }
+  }
+}
+
+@layer base {
+  body {
+    @apply bg-zinc-950 text-white min-h-screen overflow-x-hidden;
+    background-image: 
+      radial-gradient(circle at 15% 50%, rgba(188, 19, 254, 0.05), transparent 25%),
+      radial-gradient(circle at 85% 30%, rgba(0, 243, 255, 0.05), transparent 25%);
+  }
+}
+
+@layer utilities {
+  .glass-panel {
+    @apply bg-zinc-900/60 backdrop-blur-md border border-zinc-800 shadow-lg shadow-black/50 rounded-xl;
+  }
+  
+  .text-glow-blue {
+    text-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
+  }
+  
+  .text-glow-purple {
+    text-shadow: 0 0 10px rgba(188, 19, 254, 0.5);
+  }
+}
+
+/* Leaflet Map overrides for dark mode */
+.leaflet-container {
+  background: #09090b !important;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+.leaflet-control-zoom a {
+  background-color: rgba(20, 20, 25, 0.8) !important;
+  color: #fff !important;
+  border-color: #3f3f46 !important;
+}
