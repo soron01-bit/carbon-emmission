@@ -11,6 +11,7 @@ function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [metrics, setMetrics] = useState(mockDashboardData.summary);
   const [nodeStatus, setNodeStatus] = useState("NYC-Alpha-01");
+  const [cityName, setCityName] = useState("New York");
   const [isUpdating, setIsUpdating] = useState(false);
   const [mapData, setMapData] = useState(mockDashboardData.mapData);
   const [showAnalysis, setShowAnalysis] = useState(false);
@@ -23,8 +24,20 @@ function App() {
     return () => clearTimeout(timer);
   }, []);
 
-  const handleLocationChange = (lat, lon) => {
+  const handleLocationChange = async (lat, lon) => {
     setIsUpdating(true);
+    
+    // Reverse Geocoding to get City Name
+    try {
+      const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
+      const data = await response.json();
+      const city = data.address.city || data.address.town || data.address.village || data.address.suburb || "Local Area";
+      setCityName(city);
+    } catch (error) {
+      console.error("Geocoding error:", error);
+      setCityName("Local Area");
+    }
+
     // Simulate a brief delay for "scanning" new location data
     setTimeout(() => {
       const newData = generateLocationData(lat, lon);
@@ -113,7 +126,14 @@ function App() {
                         exit={{ opacity: 0.5 }}
                         className="flex flex-col gap-4"
                       >
-                        <MetricCard title="Air Quality (AQI)" value={metrics.aqi} unit="US AQI" icon={Wind} trend={{ value: '+12%', label: 'local variance', isPositive: false }} delay={0.1} />
+                        <MetricCard 
+                          title="Air Quality (AQI)" 
+                          value={metrics.aqi} 
+                          unit={`${cityName} AQI`} 
+                          icon={Wind} 
+                          trend={{ value: '+12%', label: 'local variance', isPositive: false }} 
+                          delay={0.1} 
+                        />
                         <MetricCard title="Carbon Emission" value={metrics.carbonEmission} unit="t/day" icon={Factory} trend={{ value: '-5%', label: 'sector avg', isPositive: true }} delay={0.2} />
                         <MetricCard title="Traffic Congestion" value={`${metrics.trafficCongestion}%`} icon={Car} trend={{ value: '+2%', label: 'local density', isPositive: false }} delay={0.3} />
                         <MetricCard title="Avg Temperature" value={`${metrics.temperature}°C`} icon={CloudRain} trend={{ value: '+1.2°C', label: 'micro-climate', isPositive: false }} delay={0.4} />
@@ -170,7 +190,7 @@ function App() {
                 <h1 className="text-3xl font-bold text-white mb-2">Detailed Analysis Report</h1>
                 <div className="flex items-center gap-2 text-zinc-500">
                   <Activity size={16} className="text-cyan-500" />
-                  <span className="text-sm font-mono uppercase tracking-widest">Active Link: {nodeStatus}</span>
+                  <span className="text-sm font-mono uppercase tracking-widest">Active Link: {nodeStatus} ({cityName})</span>
                 </div>
               </header>
 
@@ -180,7 +200,7 @@ function App() {
                 <div className="glass-panel p-6">
                   <h3 className="text-white font-semibold mb-3">Environmental Summary</h3>
                   <p className="text-zinc-400 text-sm leading-relaxed">
-                    Based on current sensor data from node {nodeStatus}, the area is experiencing {metrics.aqi > 100 ? 'elevated' : 'moderate'} pollutant levels. 
+                    Based on current sensor data from node {nodeStatus} in {cityName}, the area is experiencing {metrics.aqi > 100 ? 'elevated' : 'moderate'} pollutant levels. 
                     Recommended action: {metrics.aqi > 100 ? 'Deploy air filtration drones.' : 'Continue routine monitoring.'}
                   </p>
                 </div>
